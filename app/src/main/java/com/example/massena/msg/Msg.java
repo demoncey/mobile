@@ -15,7 +15,8 @@ public  class Msg {
 
     public enum TYPE{
         TEST,
-        LOG
+        LOG,
+        COORDINATES
     }
 
     public Msg(String msg){
