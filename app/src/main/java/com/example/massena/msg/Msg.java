@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public  class Msg {
     final private UUID uuid;
-    final private String msg;
+    final private Object data;
     protected TYPE type;
 
     public enum TYPE{
@@ -19,9 +19,9 @@ public  class Msg {
         COORDINATES
     }
 
-    public Msg(String msg){
+    public Msg(Object data){
         this.uuid=UUID.randomUUID();
-        this.msg=msg;
+        this.data=data;
         setType();
     }
 
@@ -32,8 +32,8 @@ public  class Msg {
         return uuid.toString();
     }
 
-    public String getMessage(){
-        return msg;
+    public Object getData(){
+        return data;
     }
 
     public TYPE getType(){

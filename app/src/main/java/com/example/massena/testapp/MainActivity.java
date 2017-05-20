@@ -7,10 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.example.massena.msg.LogMsg;
 import com.example.massena.msg.Msg;
+import com.example.massena.task.CoordinatesAsyncTask;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,9 +26,14 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 public class MainActivity extends AppCompatActivity {
+    private String[] adapterData = new String[] { "Afghanistan", "Albania", "Algeria",
+            "American Samoa", "Andorra", "Angola"};
     Button button;
     Button log;
+    Button test;
     TextView tv;
+    ExpandableListView listView;
+    ExpandableListAdapter expandableListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,16 +44,24 @@ public class MainActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 Msg message =(Msg) msg.obj;
                 if(message.getType()== Msg.TYPE.TEST) {
-                    tv.append("TEST "+message.getUUID() + "-" + message.getMessage() + "\n");
+                    tv.append("TEST "+message.getUUID() + "-" + message.getData().toString() + "\n");
                 }
                 if(message.getType()== Msg.TYPE.LOG) {
-                    tv.append("LOG "+message.getUUID() + "-" + message.getMessage() + "\n");
+                    tv.append("LOG "+message.getUUID() + "-" + (String) message.getData() + "\n");
                 }
-
+                if(message.getType()== Msg.TYPE.COORDINATES) {
+                    tv.append("COORDINATES "+message.getUUID() + "-" + (String) message.getData() + "\n");
+                }
             }
         };
         button= (Button) findViewById(R.id.button);
         log= (Button) findViewById(R.id.log);
+        test= (Button) findViewById(R.id.button3);
+        //listView= (ExpandableListView)  findViewById(R.id.list);
+        //listView.setAdapter(new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, adapterData));
+
+
+
         button.setOnClickListener(new View.OnClickListener(){
 
             boolean start= false;
@@ -128,6 +144,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        test.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                new CoordinatesAsyncTask(handler).exec();
+            }
+        });
     }
 
 
