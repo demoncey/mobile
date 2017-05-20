@@ -1,5 +1,6 @@
 package com.example.massena.testapp;
 
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,14 @@ import android.widget.TextView;
 import com.example.massena.msg.LogMsg;
 import com.example.massena.msg.Msg;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.Thread;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 Msg message =(Msg) msg.obj;
                 if(message.getType()== Msg.TYPE.TEST) {
-                    tv.append("Test "+message.getUUID() + "-" + message.getMessage() + "\n");
+                    tv.append("TEST "+message.getUUID() + "-" + message.getMessage() + "\n");
                 }
                 if(message.getType()== Msg.TYPE.LOG) {
                     tv.append("LOG "+message.getUUID() + "-" + message.getMessage() + "\n");
@@ -50,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             while(start) {
-                                Msg msg=new Msg("Przemek");
+                                Msg msg=new Msg(this.toString());
                                 Message message = handler.obtainMessage();
                                 message.obj=msg;
                                 handler.sendMessage(message);
@@ -78,11 +86,45 @@ public class MainActivity extends AppCompatActivity {
         log.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                LogMsg msg=new LogMsg("Alleluja");
-                Message message = handler.obtainMessage();
-                message.obj=msg;
-                handler.sendMessage(message);
+                AsyncTask.execute(new Runnable(){
 
+                    @Override
+                    public void run() {
+
+
+
+                        try {
+                            URL  githubEndpoint = new URL("https://api.github.com/");
+                            HttpsURLConnection myConnection = (HttpsURLConnection) githubEndpoint.openConnection();
+                            myConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
+                            if (myConnection.getResponseCode() == 200) {
+
+                                InputStream responseBody = myConnection.getInputStream();
+                                InputStreamReader responseBodyReader =
+                                        new InputStreamReader(responseBody, "UTF-8");
+
+                                LogMsg msg=new LogMsg(responseBodyReader.toString());
+                                Message message = handler.obtainMessage();
+                                message.obj=msg;
+                                handler.sendMessage(message);
+                            } else {
+                                // Error handling code goes here
+                            }
+
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        LogMsg msg=new LogMsg(this.toString());
+                        Message message = handler.obtainMessage();
+                        message.obj=msg;
+                        handler.sendMessage(message);
+
+                    }
+                });
             }
         });
 
