@@ -1,4 +1,4 @@
-package com.example.massena.task;
+package com.example.massena.tasks;
 
 /**
  * Created by massena on 2017-05-20.
@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 
-import com.example.massena.msg.CoordinatesMsg;
+import com.example.massena.messages.CoordinatesMsg;
 
 
 

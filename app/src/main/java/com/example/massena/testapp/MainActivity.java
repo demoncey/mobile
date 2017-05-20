@@ -11,9 +11,9 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import com.example.massena.msg.LogMsg;
-import com.example.massena.msg.Msg;
-import com.example.massena.task.CoordinatesAsyncTask;
+import com.example.massena.messages.LogMsg;
+import com.example.massena.messages.Msg;
+import com.example.massena.tasks.CoordinatesAsyncTask;
 
 import java.io.IOException;
 import java.io.InputStream;

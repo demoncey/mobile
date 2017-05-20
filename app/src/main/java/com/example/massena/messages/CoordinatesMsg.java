@@ -1,4 +1,4 @@
-package com.example.massena.msg;
+package com.example.massena.messages;
 
 /**
  * Created by massena on 2017-05-20.

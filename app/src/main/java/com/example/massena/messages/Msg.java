@@ -1,4 +1,4 @@
-package com.example.massena.msg;
+package com.example.massena.messages;
 
 /**
  * Created by massena on 2017-05-20.
@@ -25,17 +25,21 @@ public  class Msg {
         setType();
     }
 
+    public Msg(Object data, TYPE type){
+        this.uuid=UUID.randomUUID();
+        this.data=data;
+        this.type=type;
+    }
+
     public void setType(){
         this.type=TYPE.TEST;
     }
     public String getUUID(){
         return uuid.toString();
     }
-
     public Object getData(){
         return data;
     }
-
     public TYPE getType(){
         return type;
     }
