@@ -14,11 +14,13 @@ import android.widget.TextView;
 import com.example.massena.messages.LogMsg;
 import com.example.massena.messages.Msg;
 import com.example.massena.tasks.CoordinatesAsyncTask;
+import com.example.massena.tasks.ExtendedAsyncTask;
+import com.example.massena.tasks.UICoordinatesAsyncTask;
+import com.example.massena.tasks.gps.GpsService;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.Thread;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -31,12 +33,22 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     Button log;
     Button test;
+    Button test2;
+    Button request;
     TextView tv;
-    ExpandableListView listView;
-    ExpandableListAdapter expandableListAdapter;
+
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        final GpsService gps = new GpsService(this);
+
         setContentView(R.layout.activity_main);
         tv =(TextView) findViewById(R.id.textView);
         final Handler  handler = new Handler(){
@@ -57,36 +69,43 @@ public class MainActivity extends AppCompatActivity {
         button= (Button) findViewById(R.id.button);
         log= (Button) findViewById(R.id.log);
         test= (Button) findViewById(R.id.button3);
-        //listView= (ExpandableListView)  findViewById(R.id.list);
-        //listView.setAdapter(new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item, adapterData));
+        test2= (Button) findViewById(R.id.test2);
+        request= (Button) findViewById(R.id.request);
 
 
 
-        button.setOnClickListener(new View.OnClickListener(){
+        button.setOnClickListener(new ExtendedAsyncTask(handler){
 
             boolean start= false;
+
+            @Override
+            protected Object doInBackground(Object[] params) {
+                while(start) {
+                    Msg msg;
+                    if (gps.location !=null){
+                        msg=new Msg(gps.location.toString());
+
+                    }else{
+                        msg=new Msg(this.toString()+"ExtendedAsyncTask");
+                    }
+                    Message message = handler.obtainMessage();
+                    message.obj=msg;
+                    handler.sendMessage(message);
+                    synchronized (this) {
+                    try {
+                        wait(1000);
+                    } catch (Exception e) {}
+                    }
+                }
+                return null;
+            }
+
             @Override
             public void onClick(View v) {
                 if(!start){
                     start=true;
                     tv.setText("");
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while(start) {
-                                Msg msg=new Msg(this.toString());
-                                Message message = handler.obtainMessage();
-                                message.obj=msg;
-                                handler.sendMessage(message);
-                                synchronized (this) {
-                                    try {
-                                        wait(5000);
-                                    } catch (Exception e) {}
-                                }
-                            }
-
-                        }
-                    }).start();
+                    this.exec();
                     button.setText("Stop");
                 }else{
 
@@ -144,11 +163,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        test.setOnClickListener(new View.OnClickListener(){
+        test.setOnClickListener( new UICoordinatesAsyncTask(handler));
+
+        test2.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
                 new CoordinatesAsyncTask(handler).exec();
+            }
+        });
+
+        request.setOnClickListener( new ExtendedAsyncTask(handler){
+
+            @Override
+            protected Object doInBackground(Object[] params) {
+                LogMsg msg=new LogMsg("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+                Message message = getHandler().obtainMessage();
+                message.obj=msg;
+                handler.sendMessage(message);
+                return null;
             }
         });
     }

@@ -13,24 +13,21 @@ import com.example.massena.messages.CoordinatesMsg;
 
 
 
-public class CoordinatesAsyncTask extends AsyncTask implements Runnable {
+public class CoordinatesAsyncTask extends AsyncTask {
     private final Handler handler;
 
     public CoordinatesAsyncTask(Handler handler){
         this.handler=handler;
-    }
-    @Override
-    public void run() {
-        CoordinatesMsg msg=new CoordinatesMsg(this.toString());
-        Message message = handler.obtainMessage();
-        message.obj=msg;
-        handler.sendMessage(message);
     }
     public void exec (){
         this.execute(this);
     }
     @Override
     protected Object doInBackground(Object[] params) {
+        CoordinatesMsg msg=new CoordinatesMsg("NO LISTENERE"+this.toString());
+        Message message = handler.obtainMessage();
+        message.obj=msg;
+        handler.sendMessage(message);
         return null;
     }
 }
