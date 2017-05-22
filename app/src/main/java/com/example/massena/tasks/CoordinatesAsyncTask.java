@@ -24,7 +24,7 @@ public class CoordinatesAsyncTask extends AsyncTask {
     }
     @Override
     protected Object doInBackground(Object[] params) {
-        CoordinatesMsg msg=new CoordinatesMsg("NO LISTENERE"+this.toString());
+        CoordinatesMsg msg=new CoordinatesMsg("NO LISTENER"+this.toString());
         Message message = handler.obtainMessage();
         message.obj=msg;
         handler.sendMessage(message);

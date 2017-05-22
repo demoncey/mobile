@@ -7,8 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.example.massena.messages.LogMsg;
@@ -30,7 +28,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class MainActivity extends AppCompatActivity {
     private String[] adapterData = new String[] { "Afghanistan", "Albania", "Algeria",
             "American Samoa", "Andorra", "Angola"};
-    Button button;
+    Button thread1;
     Button log;
     Button test;
     Button test2;
@@ -66,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        button= (Button) findViewById(R.id.button);
+        thread1= (Button) findViewById(R.id.thread1);
         log= (Button) findViewById(R.id.log);
         test= (Button) findViewById(R.id.button3);
         test2= (Button) findViewById(R.id.test2);
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        button.setOnClickListener(new ExtendedAsyncTask(handler){
+        thread1.setOnClickListener(new ExtendedAsyncTask(handler){
 
             boolean start= false;
 
@@ -106,12 +104,12 @@ public class MainActivity extends AppCompatActivity {
                     start=true;
                     tv.setText("");
                     this.exec();
-                    button.setText("Stop");
+                    thread1.setText("Stop");
                 }else{
 
                     start=false;
                     tv.setText("Stopped");
-                    button.setText("Start");
+                    thread1.setText("Start");
 
                 }
             }
