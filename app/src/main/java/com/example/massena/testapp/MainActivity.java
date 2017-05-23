@@ -13,8 +13,10 @@ import com.example.massena.messages.LogMsg;
 import com.example.massena.messages.Msg;
 import com.example.massena.tasks.CoordinatesAsyncTask;
 import com.example.massena.tasks.ExtendedAsyncTask;
+import com.example.massena.tasks.UiExtendedAsyncTask;
 import com.example.massena.tasks.UICoordinatesAsyncTask;
 import com.example.massena.tasks.gps.GpsService;
+import com.example.massena.tasks.rest.AwsRestAsyncTask;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] adapterData = new String[] { "Afghanistan", "Albania", "Algeria",
             "American Samoa", "Andorra", "Angola"};
     Button thread1;
-    Button log;
+    Button thread2;
     Button test;
     Button test2;
     Button request;
@@ -65,101 +67,69 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         thread1= (Button) findViewById(R.id.thread1);
-        log= (Button) findViewById(R.id.log);
+        thread2= (Button) findViewById(R.id.thread2);
         test= (Button) findViewById(R.id.button3);
         test2= (Button) findViewById(R.id.test2);
         request= (Button) findViewById(R.id.request);
 
 
-
-        thread1.setOnClickListener(new ExtendedAsyncTask(handler){
-
-            boolean start= false;
-
-            @Override
-            protected Object doInBackground(Object[] params) {
-                while(start) {
-                    Msg msg;
-                    if (gps.location !=null){
-                        msg=new Msg(gps.location.toString());
-
-                    }else{
-                        msg=new Msg(this.toString()+"ExtendedAsyncTask");
-                    }
-                    Message message = handler.obtainMessage();
-                    message.obj=msg;
-                    handler.sendMessage(message);
-                    synchronized (this) {
-                    try {
-                        wait(1000);
-                    } catch (Exception e) {}
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public void onClick(View v) {
-                if(!start){
-                    start=true;
-                    tv.setText("");
-                    this.exec();
-                    thread1.setText("Stop");
-                }else{
-
-                    start=false;
-                    tv.setText("Stopped");
-                    thread1.setText("Start");
-
-                }
-            }
-        });
-
-
-        log.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                AsyncTask.execute(new Runnable(){
-
-                    @Override
-                    public void run() {
-
-
-
-                        try {
-                            URL  githubEndpoint = new URL("https://api.github.com/");
-                            HttpsURLConnection myConnection = (HttpsURLConnection) githubEndpoint.openConnection();
-                            myConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
-                            if (myConnection.getResponseCode() == 200) {
-
-                                InputStream responseBody = myConnection.getInputStream();
-                                InputStreamReader responseBodyReader =
-                                        new InputStreamReader(responseBody, "UTF-8");
-
-                                LogMsg msg=new LogMsg(responseBodyReader.toString());
-                                Message message = handler.obtainMessage();
-                                message.obj=msg;
+        thread1.setOnClickListener(new View.OnClickListener() {
+                boolean start = false;
+                ExtendedAsyncTask task=null;
+                @Override
+                public void onClick(View v) {
+                    if (!start) {
+                        start = true;
+                        tv.setText("");
+                        thread1.setText("Stop");
+                        task = new ExtendedAsyncTask(handler) {
+                            @Override
+                            public void doIt() {
+                                Msg msg;
+                                msg = new Msg(this.toString() + "ExtendedAsyncTask Pure task");
+                                Message message = getHandler().obtainMessage();
+                                message.obj = msg;
                                 handler.sendMessage(message);
-                            } else {
-                                // Error handling code goes here
+                                synchronized (this) {
+                                    try {
+                                        wait(1000);
+                                    } catch (Exception e) {
+                                    }
+                                }
+
+
                             }
-
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                        LogMsg msg=new LogMsg(this.toString());
-                        Message message = handler.obtainMessage();
-                        message.obj=msg;
-                        handler.sendMessage(message);
-
+                        };
+                        task.exec();
+                    }else{
+                        task.setRunning(false);
+                        start = false;
+                        tv.setText("Stopped");
+                        thread1.setText("Start");
                     }
-                });
+                }
+        });
+
+        thread2.setOnClickListener(new View.OnClickListener() {
+
+            boolean start = false;
+            AwsRestAsyncTask task=null;
+            @Override
+            public void onClick(View v) {
+                if (!start){
+                    start = true;
+                    thread2.setText("Stop");
+                    task=new AwsRestAsyncTask(handler);
+                    task.exec();
+
+                }else{
+                    task.setRunning(false);
+                    start = false;
+                    thread2.setText("Start");
+                }
             }
         });
+
 
         test.setOnClickListener( new UICoordinatesAsyncTask(handler));
 
@@ -171,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        request.setOnClickListener( new ExtendedAsyncTask(handler){
+        request.setOnClickListener( new UiExtendedAsyncTask(handler){
 
             @Override
             protected Object doInBackground(Object[] params) {

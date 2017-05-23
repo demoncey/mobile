@@ -7,10 +7,13 @@ package com.example.massena.tasks;
 
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 
+import com.example.massena.messages.CoordinatesMsg;
 
-public class ExtendedAsyncTask extends AsyncTask  {
+
+public class UiExtendedAsyncTask extends AsyncTask implements View.OnClickListener {
     private final Handler handler;
     private boolean running=false;
 
@@ -25,11 +28,11 @@ public class ExtendedAsyncTask extends AsyncTask  {
         return this.running;
     }
 
-    public ExtendedAsyncTask(Handler handler){
+    public UiExtendedAsyncTask(Handler handler){
         this.handler=handler;
     }
 
-    public ExtendedAsyncTask(){
+    public UiExtendedAsyncTask(){
         this.handler=null;
     }
 
@@ -50,6 +53,11 @@ public class ExtendedAsyncTask extends AsyncTask  {
     public void doIt(){
 
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        this.exec();
     }
 
     public Handler getHandler(){
