@@ -45,12 +45,13 @@ public class MainActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 Msg message =(Msg) msg.obj;
                 tv.append(message.getType().name()+":"+message.getSource() + ":" + message.getData().toString() + "\n");
-                if(message.getType()== Msg.TYPE.REST){
-                    //decode message
+                if(message.getType().equals( Msg.TYPE.REST)){
                     tv.append("--------------------------------------------------------\n");
                     JSONObject json=(JSONObject)message.getData();
                     tv.append(json.toString()+"\n");
                     tv.append("--------------------------------------------------------\n");
+                }else{
+                    tv.append("CHUJ CHUJ\n");
                 }
             }
         };
