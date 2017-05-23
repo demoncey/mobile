@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     //decode message
                     tv.append("--------------------------------------------------------\n");
                     JSONObject json=(JSONObject)message.getData();
-                    tv.append(json.toString()+"\n\n");
+                    tv.append(json.toString()+"\n");
                     tv.append("--------------------------------------------------------\n");
                 }
             }
