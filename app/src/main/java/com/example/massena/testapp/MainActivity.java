@@ -1,6 +1,5 @@
 package com.example.massena.testapp;
 
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -9,22 +8,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.massena.messages.LogMsg;
+import com.example.massena.messages.MessageBuilder;
 import com.example.massena.messages.Msg;
 import com.example.massena.tasks.CoordinatesAsyncTask;
 import com.example.massena.tasks.ExtendedAsyncTask;
-import com.example.massena.tasks.UiExtendedAsyncTask;
-import com.example.massena.tasks.UICoordinatesAsyncTask;
 import com.example.massena.tasks.gps.GpsService;
 import com.example.massena.tasks.rest.AwsRestAsyncTask;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -32,9 +23,7 @@ public class MainActivity extends AppCompatActivity {
             "American Samoa", "Andorra", "Angola"};
     Button thread1;
     Button thread2;
-    Button test;
-    Button test2;
-    Button request;
+    Button getposition;
     TextView tv;
 
 
@@ -55,23 +44,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 Msg message =(Msg) msg.obj;
-                if(message.getType()== Msg.TYPE.TEST) {
-                    tv.append("TEST "+message.getUUID() + "-" + message.getData().toString() + "\n");
-                }
-                if(message.getType()== Msg.TYPE.LOG) {
-                    tv.append("LOG "+message.getUUID() + "-" + (String) message.getData() + "\n");
-                }
-                if(message.getType()== Msg.TYPE.COORDINATES) {
-                    tv.append("COORDINATES "+message.getUUID() + "-" + (String) message.getData() + "\n");
-                }
+                tv.append(message.getType().name()+":"+message.getSource() + ":" + message.getData().toString() + "\n");
             }
         };
         thread1= (Button) findViewById(R.id.thread1);
         thread2= (Button) findViewById(R.id.thread2);
-        test= (Button) findViewById(R.id.button3);
-        test2= (Button) findViewById(R.id.test2);
-        request= (Button) findViewById(R.id.request);
+        getposition= (Button) findViewById(R.id.getposition);
 
+        
 
         thread1.setOnClickListener(new View.OnClickListener() {
                 boolean start = false;
@@ -85,10 +65,7 @@ public class MainActivity extends AppCompatActivity {
                         task = new ExtendedAsyncTask(handler) {
                             @Override
                             public void doIt() {
-                                Msg msg;
-                                msg = new Msg(this.toString() + "ExtendedAsyncTask Pure task");
-                                Message message = getHandler().obtainMessage();
-                                message.obj = msg;
+                                Message message =new MessageBuilder(this.getHandler()).setDefaultType().setData("IT is test data from Task").setSource(this.toString()).builMessage();
                                 handler.sendMessage(message);
                                 synchronized (this) {
                                     try {
@@ -96,8 +73,6 @@ public class MainActivity extends AppCompatActivity {
                                     } catch (Exception e) {
                                     }
                                 }
-
-
                             }
                         };
                         task.exec();
@@ -130,28 +105,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        test.setOnClickListener( new UICoordinatesAsyncTask(handler));
-
-        test2.setOnClickListener(new View.OnClickListener(){
-
+        getposition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new CoordinatesAsyncTask(handler).exec();
+                CoordinatesAsyncTask task=new CoordinatesAsyncTask(handler);
+                task.exec();
             }
         });
 
-        request.setOnClickListener( new UiExtendedAsyncTask(handler){
-
-            @Override
-            protected Object doInBackground(Object[] params) {
-                LogMsg msg=new LogMsg("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-                Message message = getHandler().obtainMessage();
-                message.obj=msg;
-                handler.sendMessage(message);
-                return null;
-            }
-        });
     }
 
 

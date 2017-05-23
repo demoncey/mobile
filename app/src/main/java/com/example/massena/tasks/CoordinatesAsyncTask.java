@@ -9,8 +9,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 
-import com.example.massena.messages.CoordinatesMsg;
-
+import com.example.massena.messages.MessageBuilder;
 
 
 public class CoordinatesAsyncTask extends AsyncTask {
@@ -24,9 +23,8 @@ public class CoordinatesAsyncTask extends AsyncTask {
     }
     @Override
     protected Object doInBackground(Object[] params) {
-        CoordinatesMsg msg=new CoordinatesMsg("NO LISTENER"+this.toString());
-        Message message = handler.obtainMessage();
-        message.obj=msg;
+
+        Message message =new MessageBuilder(handler).setCoordinateType().setData("Coordinates are XXXX YYYY").setSource(this.toString()).builMessage();
         handler.sendMessage(message);
         return null;
     }

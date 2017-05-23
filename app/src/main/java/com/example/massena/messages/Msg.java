@@ -12,11 +12,14 @@ public  class Msg {
     final private UUID uuid;
     final private Object data;
     protected TYPE type;
+    private String source="NULLLLLLLLL";
 
     public enum TYPE{
+        DEFAULT,
         TEST,
         LOG,
-        COORDINATES
+        COORDINATES,
+        REST
     }
 
     public Msg(Object data){
@@ -25,15 +28,19 @@ public  class Msg {
         setType();
     }
 
-    public Msg(Object data, TYPE type){
-        this.uuid=UUID.randomUUID();
+
+    public Msg(UUID uuid,TYPE type,Object data,String source){
+        this.uuid=uuid;
         this.data=data;
         this.type=type;
+        this.source=source;
     }
+
 
     public void setType(){
         this.type=TYPE.TEST;
     }
+
     public String getUUID(){
         return uuid.toString();
     }
@@ -42,6 +49,9 @@ public  class Msg {
     }
     public TYPE getType(){
         return type;
+    }
+    public String getSource(){
+        return this.source;
     }
 
 

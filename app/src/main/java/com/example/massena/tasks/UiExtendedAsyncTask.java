@@ -7,10 +7,7 @@ package com.example.massena.tasks;
 
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Message;
 import android.view.View;
-
-import com.example.massena.messages.CoordinatesMsg;
 
 
 public class UiExtendedAsyncTask extends AsyncTask implements View.OnClickListener {

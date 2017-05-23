@@ -3,6 +3,7 @@ package com.example.massena.tasks.rest;
 import android.os.Handler;
 import android.os.Message;
 
+import com.example.massena.messages.MessageBuilder;
 import com.example.massena.messages.Msg;
 import com.example.massena.tasks.ExtendedAsyncTask;
 
@@ -31,15 +32,14 @@ public class AwsRestAsyncTask extends ExtendedAsyncTask {
             URL service = new URL(url);
             HttpsURLConnection connection = (HttpsURLConnection) service.openConnection();
             connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
-            Message message = getHandler().obtainMessage();
+            Message message;
 
             if(connection.getResponseCode()==200){
-                msg = new Msg("200 200 200 200");
+               message =new MessageBuilder(this.getHandler()).setType(Msg.TYPE.REST).setData("Rest respond with 200").setSource(this.toString()).builMessage();
 
             }else{
-                msg = new Msg(this.toString() + "not 200 not 200 not 200 not 200");
+                message =new MessageBuilder(this.getHandler()).setRestType().setData("Rest respond with error").setSource(this.toString()).builMessage();
             }
-            message.obj = msg;
             getHandler().sendMessage(message);
 
         } catch  (MalformedURLException e) {
