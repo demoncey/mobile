@@ -7,7 +7,13 @@ import com.example.massena.messages.MessageBuilder;
 import com.example.massena.messages.Msg;
 import com.example.massena.tasks.ExtendedAsyncTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -35,7 +41,22 @@ public class AwsRestAsyncTask extends ExtendedAsyncTask {
             Message message;
 
             if(connection.getResponseCode()==200){
-               message =new MessageBuilder(this.getHandler()).setType(Msg.TYPE.REST).setData("Rest respond with 200").setSource(this.toString()).builMessage();
+
+
+
+                InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
+                BufferedReader buff = new BufferedReader(in);
+                String line;
+                String text="";
+                StringBuilder sb= new StringBuilder();
+                do {
+                    line = buff.readLine();
+                    sb.append(line);
+                } while (line != null);
+
+
+                JSONObject json = new JSONObject(sb.toString());
+                message =new MessageBuilder(this.getHandler()).setType(Msg.TYPE.REST).setData(json).setSource(this.toString()).builMessage();
 
             }else{
                 message =new MessageBuilder(this.getHandler()).setRestType().setData("Rest respond with error").setSource(this.toString()).builMessage();
@@ -45,6 +66,8 @@ public class AwsRestAsyncTask extends ExtendedAsyncTask {
         } catch  (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 

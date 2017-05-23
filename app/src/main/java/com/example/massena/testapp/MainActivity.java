@@ -15,7 +15,7 @@ import com.example.massena.tasks.ExtendedAsyncTask;
 import com.example.massena.tasks.gps.GpsService;
 import com.example.massena.tasks.rest.AwsRestAsyncTask;
 
-
+import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -45,13 +45,20 @@ public class MainActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 Msg message =(Msg) msg.obj;
                 tv.append(message.getType().name()+":"+message.getSource() + ":" + message.getData().toString() + "\n");
+                if(message.getType()== Msg.TYPE.REST){
+                    //decode message
+                    tv.append("--------------------------------------------------------\n");
+                    JSONObject json=(JSONObject)message.getData();
+                    tv.append(json.toString()+"\n\n");
+                    tv.append("--------------------------------------------------------\n");
+                }
             }
         };
         thread1= (Button) findViewById(R.id.thread1);
         thread2= (Button) findViewById(R.id.thread2);
         getposition= (Button) findViewById(R.id.getposition);
 
-        
+
 
         thread1.setOnClickListener(new View.OnClickListener() {
                 boolean start = false;
@@ -93,14 +100,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!start){
                     start = true;
-                    thread2.setText("Stop");
+                    thread2.setText("Stop Request");
                     task=new AwsRestAsyncTask(handler);
                     task.exec();
 
                 }else{
                     task.setRunning(false);
                     start = false;
-                    thread2.setText("Start");
+                    thread2.setText("Start Request");
                 }
             }
         });
