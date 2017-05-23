@@ -1,4 +1,4 @@
-package com.example.massena.tasks;
+package com.example.massena.tasks.gps;
 
 /**
  * Created by massena on 2017-05-20.

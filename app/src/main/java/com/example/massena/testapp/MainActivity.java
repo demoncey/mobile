@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.example.massena.messages.MessageBuilder;
 import com.example.massena.messages.Msg;
-import com.example.massena.tasks.CoordinatesAsyncTask;
+import com.example.massena.tasks.gps.CoordinatesAsyncTask;
 import com.example.massena.tasks.ExtendedAsyncTask;
 import com.example.massena.tasks.gps.GpsService;
 import com.example.massena.tasks.rest.AwsRestAsyncTask;
