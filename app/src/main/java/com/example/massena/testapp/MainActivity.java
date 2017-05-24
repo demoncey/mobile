@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         final GpsService gps = new GpsService(this);
 
+
         setContentView(R.layout.activity_main);
         tv =(TextView) findViewById(R.id.textView);
         final Handler  handler = new Handler(){

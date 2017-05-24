@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import com.example.massena.messages.MessageBuilder;
@@ -27,6 +28,12 @@ public class CoordinatesAsyncTask extends AsyncTask implements LocationListener 
     private final Context context;
     private boolean isNetworkEnabled = false;
     private boolean isGpsEnabled = false;
+    // The minimum distance to change Updates in meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+
+    // The minimum time between updates in milliseconds
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+
 
     public CoordinatesAsyncTask(Handler handler, Context context) {
 
@@ -50,10 +57,18 @@ public class CoordinatesAsyncTask extends AsyncTask implements LocationListener 
 
 
         if (isNetworkEnabled) {
+
+            Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
+            Log.i(this.toString(),"Network is enabled");
+            Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
+
             message = new MessageBuilder(handler).setCoordinateType().setData("YYYYY network localization enabled").setSource(this.toString()).builMessage();
             handler.sendMessage(message);
         }
         if (isGpsEnabled) {
+            Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
+            Log.i(this.toString(),"Gps is enabled");
+            Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
             message = new MessageBuilder(handler).setCoordinateType().setData("YYYYY gps localization enabled").setSource(this.toString()).builMessage();
             handler.sendMessage(message);
 
@@ -66,9 +81,16 @@ public class CoordinatesAsyncTask extends AsyncTask implements LocationListener 
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
-                Log.i(this.toString(),"RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+                Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
+                Log.i(this.toString(),"Problem with permission");
+                Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
                 return 0;
             }
+            Looper.prepare();
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(lastKnownLocation==null ){
                 Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
@@ -101,6 +123,11 @@ public class CoordinatesAsyncTask extends AsyncTask implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
+
+        Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
+        Log.i(this.toString(),"LOCATION CHANGED XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        Log.i(this.toString(),"------------------------------------------------------------------------------------------------");
+
 
     }
 
