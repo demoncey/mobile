@@ -113,10 +113,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         getposition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CoordinatesAsyncTask task=new CoordinatesAsyncTask(handler);
+                CoordinatesAsyncTask task=new CoordinatesAsyncTask(handler ,getApplicationContext());
                 task.exec();
             }
         });
